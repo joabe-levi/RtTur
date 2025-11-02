@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RtTur — Viagens Premium</title>
+  <meta name="description" content="RtTur: viagens premium com conforto absoluto e destinos exclusivos." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --cor-dourada:#D4AF37;
+      --cor-preta:#1B1B1B;
+      --cor-cinza-escuro:#4A4A4A;
+      --cor-cinza-claro:#F5F5F5;
+      --cor-branca:#FFFFFF;
+      --max-w:1200px;
+      --radius:14px;
+      --shadow:0 8px 24px rgba(0,0,0,.18);
+      --shadow-soft:0 6px 14px rgba(0,0,0,.12);
+      --transition: .35s ease;
+    }
+
+    /* Reset básico */
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:'Open Sans',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif;
+      color:var(--cor-branca);
+      background:var(--cor-preta);
+      line-height:1.6;
+    }
+    img{max-width:100%;display:block}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit;cursor:pointer;border:none}
+
+    /* Container */
+    .container{
+      width:100%;
+      max-width:var(--max-w);
+      margin-inline:auto;
+      padding-inline:1rem;
+    }
+
+    /* Navbar */
+    header{
+      position:fixed; inset-inline:0; top:0; z-index:999;
+      background:rgba(27,27,27,.85);
+      backdrop-filter:saturate(140%) blur(8px);
+      border-bottom:1px solid rgba(212,175,55,.22);
+    }
+    nav{
+      display:flex; align-items:center; justify-content:space-between;
+      height:64px;
+    }
+    .logo{
+      font-family:'Montserrat',sans-serif;
+      font-weight:800; letter-spacing:.5px;
+      color:var(--cor-dourada);
+      font-size:1.25rem;
+      display:flex; align-items:center; gap:.5rem;
+    }
+    .logo-badge{
+      width:28px;height:28px;border-radius:50%;
+      background:linear-gradient(135deg,var(--cor-dourada),#a38420);
+      display:grid;place-items:center;color:var(--cor-preta);font-weight:800;
+    }
+    .nav-links{
+      display:flex; gap:1.25rem; align-items:center;
+    }
+    .nav-links a{
+      color:var(--cor-branca);
+      padding:.35rem .5rem;
+      border-radius:8px;
+      transition:color var(--transition), background var(--transition);
+      font-weight:600;
+    }
+    .nav-links a:hover{ color:var(--cor-dourada); background:rgba(212,175,55,.1); }
+
+    /* Hamburger */
+    .hamburger{
+      display:inline-flex; flex-direction:column; gap:5px;
+      width:40px; height:28px; background:transparent;
+    }
+    .hamburger span{
+      display:block; height:3px; width:100%;
+      background:var(--cor-branca); border-radius:2px;
+      transition:transform .3s ease, opacity .3s ease;
+    }
+    .mobile-menu{
+      display:none; flex-direction:column; gap:.75rem; padding:1rem;
+      background:rgba(27,27,27,.98); border-top:1px solid rgba(212,175,55,.18);
+    }
+    .mobile-open .mobile-menu{ display:flex; }
+    .mobile-open .hamburger span:nth-child(1){ transform:translateY(8px) rotate(45deg) }
+    .mobile-open .hamburger span:nth-child(2){ opacity:0 }
+    .mobile-open .hamburger span:nth-child(3){ transform:translateY(-8px) rotate(-45deg) }
+
+    /* Hero - carrossel fullscreen com fade */
+    .hero{
+      position:relative;
+      height:100vh;
+      min-height:560px;
+      margin-top:64px; /* altura navbar */
+      overflow:hidden;
+      isolation:isolate;
+    }
+    .slides{
+      position:absolute; inset:0; list-style:none; margin:0; padding:0;
+    }
+    .slide{
+      position:absolute; inset:0; opacity:0; transition:opacity 1s ease-in-out;
+      background-size:cover; background-position:center; background-repeat:no-repeat;
+      transform:scale(1.02); /* leve zoom para luxo */
+    }
+    .slide.active{ opacity:1; }
+
+    .hero-overlay{
+      position:absolute; inset:0;
+      background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.25) 45%, rgba(0,0,0,.65));
+    }
+    .hero-content{
+      position:relative; z-index:2; height:100%; display:grid; place-items:center;
+      text-align:center; padding:1rem; color:var(--cor-branca);
+    }
+    .hero h1{
+      font-family:'Montserrat',sans-serif;
+      font-size: clamp(1.8rem, 3.5vw + 1rem, 3rem);
+      margin:0 0 .75rem; letter-spacing:.5px;
+    }
+    .hero p{ color:#e8e8e8; max-width:760px; margin:.25rem auto 1.25rem; }
+    .cta-hero{
+      display:inline-flex; align-items:center; gap:.6rem;
+      background:var(--cor-dourada); color:var(--cor-preta);
+      padding:.8rem 1.2rem; border-radius:999px; font-weight:800;
+      box-shadow:var(--shadow); transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .cta-hero:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(212,175,55,.25) }
+
+    /* Controles carrossel */
+    .hero-controls{
+      position:absolute; inset-inline:0; bottom:18px;
+      display:flex; align-items:center; justify-content:center; gap:.5rem;
+      z-index:3;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.7);
+      transition:transform var(--transition), background var(--transition);
+    }
+    .dot.active{ background:var(--cor-dourada); transform:scale(1.15) }
+    .arrow{
+      position:absolute; top:50%; transform:translateY(-50%);
+      width:44px; height:44px; display:grid; place-items:center;
+      color:var(--cor-preta); background:rgba(212,175,55,.9); border-radius:50%;
+      box-shadow:var(--shadow-soft); z-index:3;
+    }
+    .arrow:hover{ background:var(--cor-dourada) }
+    .arrow.prev{ left:14px } .arrow.next{ right:14px }
+
+    /* Seções */
+    section{ padding:64px 0; }
+    .section-title{
+      font-family:'Montserrat',sans-serif; margin:0 0 .5rem;
+      font-size: clamp(1.25rem, 2.4vw + .8rem, 2rem);
+      color:var(--cor-dourada);
+    }
+    .section-sub{ color:#d8d8d8; margin:0 0 1.25rem; }
+
+    /* Sobre Nós */
+    .sobre{
+      background:linear-gradient(180deg, #161616, #141414);
+      border-top:1px solid rgba(212,175,55,.1);
+      border-bottom:1px solid rgba(212,175,55,.1);
+    }
+    .sobre-grid{
+      display:grid; gap:1.25rem;
+    }
+    .sobre-card{
+      background:#0f0f0f; border:1px solid rgba(212,175,55,.15);
+      border-radius:var(--radius); padding:1.25rem; box-shadow:var(--shadow-soft);
+    }
+
+    /* Destinos - Grid 3 colunas */
+    .destinos{
+      background:#121212;
+    }
+    .grid-destinos{
+      display:grid; gap:1rem;
+      grid-template-columns:1fr;
+    }
+    .card-destino{
+      background:#0f0f0f; border:1px solid rgba(212,175,55,.15);
+      border-radius:var(--radius); overflow:hidden;
+      transition:transform var(--transition), box-shadow var(--transition);
+    }
+    .card-destino:hover{ transform:translateY(-4px); box-shadow:var(--shadow) }
+    .thumb{ aspect-ratio:16/10; background:#222; }
+    .card-body{ padding:1rem }
+    .card-body h3{
+      margin:.25rem 0 .5rem; font-family:'Montserrat',sans-serif; color:var(--cor-branca);
+      font-size:1.05rem;
+    }
+    .chip{
+      display:inline-block; font-size:.8rem; color:var(--cor-preta);
+      background:var(--cor-dourada); padding:.25rem .6rem; border-radius:999px; font-weight:700;
+    }
+    .card-meta{ color:#bcbcbc; font-size:.9rem }
+
+    /* CTA Parallax */
+    .cta-parallax{
+      position:relative; min-height:52vh; display:grid; place-items:center; text-align:center;
+      background-image:url('https://images.unsplash.com/photo-1491555103944-7c647fd857e6?q=80&w=1920&auto=format&fit=crop');
+      background-size:cover; background-position:center;
+      background-attachment:fixed; /* parallax simples */
+      border-top:1px solid rgba(212,175,55,.14);
+      border-bottom:1px solid rgba(212,175,55,.14);
+      overflow:hidden;
+    }
+    .cta-parallax::after{
+      content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.75));
+    }
+    .cta-box{
+      position:relative; z-index:2; padding:1rem 1.25rem; border-radius:var(--radius);
+      background:rgba(15,15,15,.65); border:1px solid rgba(212,175,55,.25);
+      max-width:860px; margin-inline:auto;
+    }
+
+    /* Contato (2 colunas responsivas) */
+    .contato{
+      background:#111;
+    }
+    .contato-grid{
+      display:grid; grid-template-columns:1fr; border:1px solid rgba(212,175,55,.2); border-radius:var(--radius); overflow:hidden;
+    }
+    .contato-left{
+      background:var(--cor-dourada); color:var(--cor-preta);
+      padding:1.25rem 1rem;
+      display:flex; flex-direction:column; gap:1rem; justify-content:center;
+    }
+    .contato-left h3{
+      font-family:'Montserrat',sans-serif; margin:0;
+      font-size: clamp(1.15rem, 1.2vw + .9rem, 1.6rem);
+    }
+    .contato-item{ display:flex; align-items:center; gap:.6rem; font-weight:700 }
+    .btn-whatsapp{
+      align-self:flex-start; background:var(--cor-preta); color:var(--cor-branca);
+      padding:.75rem 1rem; border-radius:10px; font-weight:800;
+      box-shadow:var(--shadow-soft);
+    }
+    .contato-right{
+      background:var(--cor-cinza-claro); color:var(--cor-preta);
+      padding:1.25rem 1rem;
+    }
+    form{
+      display:grid; gap:.9rem;
+    }
+    label{ font-weight:700; color:#222 }
+    input, textarea{
+      width:100%; padding:.8rem .9rem; border-radius:10px; border:1px solid #ddd;
+      font:inherit; background:var(--cor-branca);
+    }
+    textarea{ min-height:120px; resize:vertical }
+    .btn-enviar{
+      background:var(--cor-preta); color:var(--cor-branca);
+      padding:.85rem 1rem; border-radius:10px; font-weight:800;
+    }
+    .msg-ok{ margin-top:.5rem; color:#0a6d2a; font-weight:700; display:none }
+    .msg-erro{ margin-top:.5rem; color:#a52727; font-weight:700; display:none }
+
+    /* Rodapé */
+    footer{
+      background:#0c0c0c; color:#bdbdbd; font-size:.95rem;
+      border-top:1px solid rgba(212,175,55,.15);
+    }
+    .footer-inner{
+      padding:20px 0; display:flex; flex-direction:column; gap:.6rem; align-items:center; justify-content:center;
+    }
+    .footer-inner .mini{ color:#9c9c9c; font-size:.85rem }
+    .sep{ opacity:.35; margin:0 .4rem }
+
+    /* Responsividade */
+    @media (min-width: 640px){
+      .sobre-grid{ grid-template-columns: repeat(2, 1fr); }
+      .grid-destinos{ grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1024px){
+      .nav-links{ gap:1.5rem }
+      .hamburger{ display:none }
+      .mobile-menu{ display:none !important }
+      .grid-destinos{ grid-template-columns: repeat(3, 1fr); }
+      .contato-grid{ grid-template-columns: 1.1fr 1.4fr; }
+      .sobre-grid{ grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* Acessibilidade focos */
+    :focus-visible{
+      outline:2px dashed var(--cor-dourada);
+      outline-offset:2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header>
+    <div class="container">
+      <nav aria-label="Navegação principal">
+        <a href="#home" class="logo">
+          <span class="logo-badge">R</span> RtTur
+        </a>
+
+        <div class="nav-links" aria-hidden="false">
+          <a href="#sobre">Sobre Nós</a>
+          <a href="#destinos">Destinos</a>
+          <a href="#experiencia">Experiência</a>
+          <a href="#contato">Contato</a>
+        </div>
+
+        <button class="hamburger" aria-label="Abrir menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </nav>
+
+      <!-- Menu mobile -->
+      <div class="mobile-menu" id="mobileMenu" role="menu">
+        <a href="#sobre" role="menuitem">Sobre Nós</a>
+        <a href="#destinos" role="menuitem">Destinos</a>
+        <a href="#experiencia" role="menuitem">Experiência</a>
+        <a href="#contato" role="menuitem">Contato</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="home">
+
+    <!-- HERO / CARROSSEL -->
+    <section class="hero" aria-label="Destaques de destinos">
+      <div class="hero-overlay" aria-hidden="true"></div>
+
+      <a class="arrow prev" aria-label="Slide anterior" href="#!" data-control="prev">❮</a>
+      <a class="arrow next" aria-label="Próximo slide" href="#!" data-control="next">❯</a>
+
+      <ul class="slides" id="slides">
+        <li class="slide active" style="background-image:url('https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=1920&auto=format&fit=crop');"></li>
+        <li class="slide" style="background-image:url('https://images.unsplash.com/photo-1526779259212-939e64788e3c?q=80&w=1920&auto=format&fit=crop');"></li>
+        <li class="slide" style="background-image:url('https://images.unsplash.com/photo-1491555103944-7c647fd857e6?q=80&w=1920&auto=format&fit=crop');"></li>
+      </ul>
+
+      <div class="hero-content container">
+        <div>
+          <h1>Viagens premium para quem exige conforto.</h1>
+          <p>Experiências exclusivas, curadoria de hotéis 5★, traslados particulares e roteiros sob medida. Viva o luxo de viajar sem preocupações com a RtTur.</p>
+          <a href="#destinos" class="cta-hero">✨ Explorar destinos</a>
+        </div>
+      </div>
+
+      <div class="hero-controls" aria-label="Indicadores do carrossel">
+        <button class="dot active" aria-label="Slide 1" data-index="0"></button>
+        <button class="dot" aria-label="Slide 2" data-index="1"></button>
+        <button class="dot" aria-label="Slide 3" data-index="2"></button>
+      </div>
+    </section>
+
+    <!-- SOBRE NÓS -->
+    <section id="sobre" class="sobre">
+      <div class="container">
+        <h2 class="section-title">Sobre Nós</h2>
+        <p class="section-sub">Excelência, privacidade e sofisticação no centro de cada jornada.</p>
+
+        <div class="sobre-grid">
+          <article class="sobre-card">
+            <h3 style="margin-top:0;font-family:'Montserrat',sans-serif;">Curadoria Premium</h3>
+            <p>Selecionamos hotéis icônicos, lounges VIP e experiências gastronômicas premiadas. Seu tempo é precioso — nós o transformamos em memórias inesquecíveis.</p>
+          </article>
+
+          <article class="sobre-card">
+            <h3 style="margin-top:0;font-family:'Montserrat',sans-serif;">Assistência 24/7</h3>
+            <p>Concierge dedicado antes, durante e depois da viagem. Ajustes de última hora? Tratados com discrição e agilidade.</p>
+          </article>
+
+          <article class="sobre-card">
+            <h3 style="margin-top:0;font-family:'Montserrat',sans-serif;">Roteiros Sob Medida</h3>
+            <p>Do transfer executivo a passeios privativos: tudo alinhado ao seu estilo, do wellness ao business trip.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESTINOS -->
+    <section id="destinos" class="destinos">
+      <div class="container">
+        <h2 class="section-title">Destinos</h2>
+        <p class="section-sub">Exclusivos, elegantes e inesquecíveis.</p>
+
+        <div class="grid-destinos">
+          <!-- Card 1 -->
+          <article class="card-destino">
+            <div class="thumb">
+              <img src="https://images.unsplash.com/photo-1524213452761-9f8950c79f36?q=80&w=1200&auto=format&fit=crop" alt="Resort à beira-mar nas Maldivas" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+            <div class="card-body">
+              <span class="chip">Maldivas</span>
+              <h3>Bangalô sobre as águas</h3>
+              <p class="card-meta">7 noites • Café da manhã • Traslado privado</p>
+            </div>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="card-destino">
+            <div class="thumb">
+              <img src="https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?q=80&w=1200&auto=format&fit=crop" alt="Vista da Torre Eiffel ao entardecer" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+            <div class="card-body">
+              <span class="chip">Paris</span>
+              <h3>Romance & Haute Cuisine</h3>
+              <p class="card-meta">5 noites • Jantar Michelin • City tour privativo</p>
+            </div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="card-destino">
+            <div class="thumb">
+              <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop" alt="Skyline de Dubai com luxo moderno" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+            <div class="card-body">
+              <span class="chip">Dubai</span>
+              <h3>Sob o brilho do ouro</h3>
+              <p class="card-meta">6 noites • 4x4 no deserto • Lounge VIP</p>
+            </div>
+          </article>
+
+          <!-- Card 4 -->
+          <article class="card-destino">
+            <div class="thumb">
+              <img src="https://images.unsplash.com/photo-1489171078254-c3365d6e359f?q=80&w=1200&auto=format&fit=crop" alt="Vinhas na Toscana ao pôr do sol" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+            <div class="card-body">
+              <span class="chip">Toscana</span>
+              <h3>Wine & Slow Travel</h3>
+              <p class="card-meta">4 noites • Degustações • Motorista particular</p>
+            </div>
+          </article>
+
+          <!-- Card 5 -->
+          <article class="card-destino">
+            <div class="thumb">
+              <img src="https://images.unsplash.com/photo-1494475673543-6a6a27143b22?q=80&w=1200&auto=format&fit=crop" alt="Safari de luxo na savana africana" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+            <div class="card-body">
+              <span class="chip">África</span>
+              <h3>Safari de luxo</h3>
+              <p class="card-meta">5 noites • Lodge 5★ • Game drives privados</p>
+            </div>
+          </article>
+
+          <!-- Card 6 -->
+          <article class="card-destino">
+            <div class="thumb">
+              <img src="https://images.unsplash.com/photo-1471874708433-acd480424f76?q=80&w=1200&auto=format&fit=crop" alt="Ilhas gregas com mar cristalino" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+            <div class="card-body">
+              <span class="chip">Grécia</span>
+              <h3>Cíclades em iate</h3>
+              <p class="card-meta">7 noites • Iate privado • Chef a bordo</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA PARALLAX -->
+    <section id="experiencia" class="cta-parallax" aria-label="Convite à experiência RtTur">
+      <div class="cta-box">
+        <h2 class="section-title" style="margin-bottom:.4rem;">Eleve sua forma de viajar</h2>
+        <p class="section-sub" style="margin:0 auto 1rem; max-width:760px;">
+          Da chegada ao embarque, você sente a diferença: conforto, privacidade e tempo a seu favor.
+        </p>
+        <a href="#contato" class="cta-hero">💼 Solicitar proposta exclusiva</a>
+      </div>
+    </section>
+
+    <!-- CONTATO -->
+    <section id="contato" class="contato">
+      <div class="container">
+        <h2 class="section-title">Contato</h2>
+        <p class="section-sub">Comece sua jornada com um atendimento premium.</p>
+
+        <div class="contato-grid">
+          <!-- Coluna Esquerda -->
+          <div class="contato-left">
+            <h3>Comece sua jornada com conforto</h3>
+
+            <div class="contato-item">📞 Telefone: <strong>(11) 3000-0000</strong></div>
+            <div class="contato-item">💬 WhatsApp: <strong>(11) 90000-0000</strong></div>
+            <div class="contato-item">✉️ E-mail: <strong>contato@rttur.com</strong></div>
+
+            <a class="btn-whatsapp" href="https://wa.me/5599999999999" target="_blank" rel="noopener">WhatsApp</a>
+          </div>
+
+          <!-- Coluna Direita -->
+          <div class="contato-right">
+            <form id="formContato" novalidate>
+              <div>
+                <label for="nome">Nome</label>
+                <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required>
+              </div>
+              <div>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="voce@email.com" required>
+              </div>
+              <div>
+                <label for="telefone">Telefone</label>
+                <input type="tel" id="telefone" name="telefone" placeholder="(DDD) 90000-0000" required>
+              </div>
+              <div>
+                <label for="mensagem">Mensagem</label>
+                <textarea id="mensagem" name="mensagem" placeholder="Conte sobre seus planos de viagem" required></textarea>
+              </div>
+              <button type="submit" class="btn-enviar">Enviar</button>
+              <div class="msg-ok" role="status" aria-live="polite">✅ Mensagem enviada! Em breve entraremos em contato.</div>
+              <div class="msg-erro" role="alert">⚠️ Preencha todos os campos corretamente.</div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- RODAPÉ -->
+  <footer>
+    <div class="container footer-inner">
+      <div>© <span id="year"></span> <strong>RtTur</strong><span class="sep">•</span> Viagens premium e destinos exclusivos</div>
+      <div class="mini">CNPJ 00.000.000/0001-00 — Todos os direitos reservados</div>
+    </div>
+  </footer>
+
+  <!-- JavaScript ES6+ -->
+  <script>
+    // Utilidades
+    const $ = (sel, el=document) => el.querySelector(sel);
+    const $$ = (sel, el=document) => [...el.querySelectorAll(sel)];
+
+    // Ano no rodapé
+    $('#year').textContent = new Date().getFullYear();
+
+    // Menu hambúrguer para mobile
+    const header = document.querySelector('header');
+    const burger = document.querySelector('.hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    const toggleMenu = () => {
+      const expanded = burger.getAttribute('aria-expanded') === 'true';
+      burger.setAttribute('aria-expanded', String(!expanded));
+      header.classList.toggle('mobile-open');
+    };
+    burger.addEventListener('click', toggleMenu);
+    $$('#mobileMenu a').forEach(a => a.addEventListener('click', () => {
+      // fecha após clique em link
+      if (header.classList.contains('mobile-open')) toggleMenu();
+    }));
+
+    // Carrossel com fade (auto + controles + dots)
+    const slides = $$('#slides .slide');
+    const dots = $$('.dot');
+    const prevBtn = $('[data-control="prev"]');
+    const nextBtn = $('[data-control="next"]');
+
+    let current = 0;
+    let timer = null;
+    const DURATION = 5500; // ms
+
+    const goTo = (index) => {
+      slides[current].classList.remove('active');
+      dots[current].classList.remove('active');
+      current = (index + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      dots[current].classList.add('active');
+    };
+
+    const next = () => goTo(current + 1);
+    const prev = () => goTo(current - 1);
+
+    const startAuto = () => {
+      stopAuto();
+      timer = setInterval(next, DURATION);
+    };
+    const stopAuto = () => timer && clearInterval(timer);
+
+    nextBtn.addEventListener('click', () => { next(); startAuto(); });
+    prevBtn.addEventListener('click', () => { prev(); startAuto(); });
+    dots.forEach((d, i) => d.addEventListener('click', () => { goTo(i); startAuto(); }));
+
+    // Pausar auto-play ao focar nos controles (acessibilidade/UX)
+    [nextBtn, prevBtn, ...dots].forEach(el => {
+      el.addEventListener('focusin', stopAuto);
+      el.addEventListener('focusout', startAuto);
+      el.addEventListener('mouseenter', stopAuto);
+      el.addEventListener('mouseleave', startAuto);
+    });
+
+    // Inicia
+    startAuto();
+
+    // Validação simples do formulário
+    const form = $('#formContato');
+    const msgOk = $('.msg-ok', form);
+    const msgErro = $('.msg-erro', form);
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      msgOk.style.display = 'none';
+      msgErro.style.display = 'none';
+
+      const data = new FormData(form);
+      const nome = (data.get('nome') || '').trim();
+      const email = (data.get('email') || '').trim();
+      const telefone = (data.get('telefone') || '').trim();
+      const mensagem = (data.get('mensagem') || '').trim();
+
+      const camposOk = nome && email && telefone && mensagem && email.includes('@');
+
+      if (!camposOk) {
+        msgErro.style.display = 'block';
+        return;
+      }
+
+      // Aqui você poderia fazer um fetch/POST real.
+      form.reset();
+      msgOk.style.display = 'block';
+    });
+  </script>
+</body>
+</html>
