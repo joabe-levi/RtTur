@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,304 +9,13 @@
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-
-  <style>
-    :root{
-      --cor-dourada:#D4AF37;
-      --cor-preta:#1B1B1B;
-      --cor-cinza-escuro:#4A4A4A;
-      --cor-cinza-claro:#F5F5F5;
-      --cor-branca:#FFFFFF;
-      --max-w:1200px;
-      --radius:14px;
-      --shadow:0 8px 24px rgba(0,0,0,.18);
-      --shadow-soft:0 6px 14px rgba(0,0,0,.12);
-      --transition: .35s ease;
-    }
-
-    /* Reset básico */
-    *,*::before,*::after{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      font-family:'Open Sans',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif;
-      color:var(--cor-branca);
-      background:var(--cor-preta);
-      line-height:1.6;
-    }
-    img{max-width:100%;display:block}
-    a{color:inherit;text-decoration:none}
-    button{font:inherit;cursor:pointer;border:none}
-
-    /* Container */
-    .container{
-      width:100%;
-      max-width:var(--max-w);
-      margin-inline:auto;
-      padding-inline:1rem;
-    }
-
-    /* Navbar */
-    header{
-      position:fixed; inset-inline:0; top:0; z-index:999;
-      background:rgba(27,27,27,.85);
-      backdrop-filter:saturate(140%) blur(8px);
-      border-bottom:1px solid rgba(212,175,55,.22);
-    }
-    nav{
-      display:flex; align-items:center; justify-content:space-between;
-      height:64px;
-    }
-    .logo{
-      font-family:'Montserrat',sans-serif;
-      font-weight:800; letter-spacing:.5px;
-      color:var(--cor-dourada);
-      font-size:1.25rem;
-      display:flex; align-items:center; gap:.5rem;
-    }
-    .logo-badge{
-      width:28px;height:28px;border-radius:50%;
-      background:linear-gradient(135deg,var(--cor-dourada),#a38420);
-      display:grid;place-items:center;color:var(--cor-preta);font-weight:800;
-    }
-    .nav-links{
-      display:flex; gap:1.25rem; align-items:center;
-    }
-    .nav-links a{
-      color:var(--cor-branca);
-      padding:.35rem .5rem;
-      border-radius:8px;
-      transition:color var(--transition), background var(--transition);
-      font-weight:600;
-    }
-    .nav-links a:hover{ color:var(--cor-dourada); background:rgba(212,175,55,.1); }
-
-    /* Hamburger */
-    .hamburger{
-      display:inline-flex; flex-direction:column; gap:5px;
-      width:40px; height:28px; background:transparent;
-    }
-    .hamburger span{
-      display:block; height:3px; width:100%;
-      background:var(--cor-branca); border-radius:2px;
-      transition:transform .3s ease, opacity .3s ease;
-    }
-    .mobile-menu{
-      display:none; flex-direction:column; gap:.75rem; padding:1rem;
-      background:rgba(27,27,27,.98); border-top:1px solid rgba(212,175,55,.18);
-    }
-    .mobile-open .mobile-menu{ display:flex; }
-    .mobile-open .hamburger span:nth-child(1){ transform:translateY(8px) rotate(45deg) }
-    .mobile-open .hamburger span:nth-child(2){ opacity:0 }
-    .mobile-open .hamburger span:nth-child(3){ transform:translateY(-8px) rotate(-45deg) }
-
-    /* Hero - carrossel fullscreen com fade */
-    .hero{
-      position:relative;
-      height:100vh;
-      min-height:560px;
-      margin-top:64px; /* altura navbar */
-      overflow:hidden;
-      isolation:isolate;
-    }
-    .slides{
-      position:absolute; inset:0; list-style:none; margin:0; padding:0;
-    }
-    .slide{
-      position:absolute; inset:0; opacity:0; transition:opacity 1s ease-in-out;
-      background-size:cover; background-position:center; background-repeat:no-repeat;
-      transform:scale(1.02); /* leve zoom para luxo */
-    }
-    .slide.active{ opacity:1; }
-
-    .hero-overlay{
-      position:absolute; inset:0;
-      background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.25) 45%, rgba(0,0,0,.65));
-    }
-    .hero-content{
-      position:relative; z-index:2; height:100%; display:grid; place-items:center;
-      text-align:center; padding:1rem; color:var(--cor-branca);
-    }
-    .hero h1{
-      font-family:'Montserrat',sans-serif;
-      font-size: clamp(1.8rem, 3.5vw + 1rem, 3rem);
-      margin:0 0 .75rem; letter-spacing:.5px;
-    }
-    .hero p{ color:#e8e8e8; max-width:760px; margin:.25rem auto 1.25rem; }
-    .cta-hero{
-      display:inline-flex; align-items:center; gap:.6rem;
-      background:var(--cor-dourada); color:var(--cor-preta);
-      padding:.8rem 1.2rem; border-radius:999px; font-weight:800;
-      box-shadow:var(--shadow); transition: transform var(--transition), box-shadow var(--transition);
-    }
-    .cta-hero:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(212,175,55,.25) }
-
-    /* Controles carrossel */
-    .hero-controls{
-      position:absolute; inset-inline:0; bottom:18px;
-      display:flex; align-items:center; justify-content:center; gap:.5rem;
-      z-index:3;
-    }
-    .dot{
-      width:10px;height:10px;border-radius:50%;
-      background:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.7);
-      transition:transform var(--transition), background var(--transition);
-    }
-    .dot.active{ background:var(--cor-dourada); transform:scale(1.15) }
-    .arrow{
-      position:absolute; top:50%; transform:translateY(-50%);
-      width:44px; height:44px; display:grid; place-items:center;
-      color:var(--cor-preta); background:rgba(212,175,55,.9); border-radius:50%;
-      box-shadow:var(--shadow-soft); z-index:3;
-    }
-    .arrow:hover{ background:var(--cor-dourada) }
-    .arrow.prev{ left:14px } .arrow.next{ right:14px }
-
-    /* Seções */
-    section{ padding:64px 0; }
-    .section-title{
-      font-family:'Montserrat',sans-serif; margin:0 0 .5rem;
-      font-size: clamp(1.25rem, 2.4vw + .8rem, 2rem);
-      color:var(--cor-dourada);
-    }
-    .section-sub{ color:#d8d8d8; margin:0 0 1.25rem; }
-
-    /* Sobre Nós */
-    .sobre{
-      background:linear-gradient(180deg, #161616, #141414);
-      border-top:1px solid rgba(212,175,55,.1);
-      border-bottom:1px solid rgba(212,175,55,.1);
-    }
-    .sobre-grid{
-      display:grid; gap:1.25rem;
-    }
-    .sobre-card{
-      background:#0f0f0f; border:1px solid rgba(212,175,55,.15);
-      border-radius:var(--radius); padding:1.25rem; box-shadow:var(--shadow-soft);
-    }
-
-    /* Destinos - Grid 3 colunas */
-    .destinos{
-      background:#121212;
-    }
-    .grid-destinos{
-      display:grid; gap:1rem;
-      grid-template-columns:1fr;
-    }
-    .card-destino{
-      background:#0f0f0f; border:1px solid rgba(212,175,55,.15);
-      border-radius:var(--radius); overflow:hidden;
-      transition:transform var(--transition), box-shadow var(--transition);
-    }
-    .card-destino:hover{ transform:translateY(-4px); box-shadow:var(--shadow) }
-    .thumb{ aspect-ratio:16/10; background:#222; }
-    .card-body{ padding:1rem }
-    .card-body h3{
-      margin:.25rem 0 .5rem; font-family:'Montserrat',sans-serif; color:var(--cor-branca);
-      font-size:1.05rem;
-    }
-    .chip{
-      display:inline-block; font-size:.8rem; color:var(--cor-preta);
-      background:var(--cor-dourada); padding:.25rem .6rem; border-radius:999px; font-weight:700;
-    }
-    .card-meta{ color:#bcbcbc; font-size:.9rem }
-
-    /* CTA Parallax */
-    .cta-parallax{
-      position:relative; min-height:52vh; display:grid; place-items:center; text-align:center;
-      background-image:url('https://images.unsplash.com/photo-1491555103944-7c647fd857e6?q=80&w=1920&auto=format&fit=crop');
-      background-size:cover; background-position:center;
-      background-attachment:fixed; /* parallax simples */
-      border-top:1px solid rgba(212,175,55,.14);
-      border-bottom:1px solid rgba(212,175,55,.14);
-      overflow:hidden;
-    }
-    .cta-parallax::after{
-      content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.75));
-    }
-    .cta-box{
-      position:relative; z-index:2; padding:1rem 1.25rem; border-radius:var(--radius);
-      background:rgba(15,15,15,.65); border:1px solid rgba(212,175,55,.25);
-      max-width:860px; margin-inline:auto;
-    }
-
-    /* Contato (2 colunas responsivas) */
-    .contato{
-      background:#111;
-    }
-    .contato-grid{
-      display:grid; grid-template-columns:1fr; border:1px solid rgba(212,175,55,.2); border-radius:var(--radius); overflow:hidden;
-    }
-    .contato-left{
-      background:var(--cor-dourada); color:var(--cor-preta);
-      padding:1.25rem 1rem;
-      display:flex; flex-direction:column; gap:1rem; justify-content:center;
-    }
-    .contato-left h3{
-      font-family:'Montserrat',sans-serif; margin:0;
-      font-size: clamp(1.15rem, 1.2vw + .9rem, 1.6rem);
-    }
-    .contato-item{ display:flex; align-items:center; gap:.6rem; font-weight:700 }
-    .btn-whatsapp{
-      align-self:flex-start; background:var(--cor-preta); color:var(--cor-branca);
-      padding:.75rem 1rem; border-radius:10px; font-weight:800;
-      box-shadow:var(--shadow-soft);
-    }
-    .contato-right{
-      background:var(--cor-cinza-claro); color:var(--cor-preta);
-      padding:1.25rem 1rem;
-    }
-    form{
-      display:grid; gap:.9rem;
-    }
-    label{ font-weight:700; color:#222 }
-    input, textarea{
-      width:100%; padding:.8rem .9rem; border-radius:10px; border:1px solid #ddd;
-      font:inherit; background:var(--cor-branca);
-    }
-    textarea{ min-height:120px; resize:vertical }
-    .btn-enviar{
-      background:var(--cor-preta); color:var(--cor-branca);
-      padding:.85rem 1rem; border-radius:10px; font-weight:800;
-    }
-    .msg-ok{ margin-top:.5rem; color:#0a6d2a; font-weight:700; display:none }
-    .msg-erro{ margin-top:.5rem; color:#a52727; font-weight:700; display:none }
-
-    /* Rodapé */
-    footer{
-      background:#0c0c0c; color:#bdbdbd; font-size:.95rem;
-      border-top:1px solid rgba(212,175,55,.15);
-    }
-    .footer-inner{
-      padding:20px 0; display:flex; flex-direction:column; gap:.6rem; align-items:center; justify-content:center;
-    }
-    .footer-inner .mini{ color:#9c9c9c; font-size:.85rem }
-    .sep{ opacity:.35; margin:0 .4rem }
-
-    /* Responsividade */
-    @media (min-width: 640px){
-      .sobre-grid{ grid-template-columns: repeat(2, 1fr); }
-      .grid-destinos{ grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (min-width: 1024px){
-      .nav-links{ gap:1.5rem }
-      .hamburger{ display:none }
-      .mobile-menu{ display:none !important }
-      .grid-destinos{ grid-template-columns: repeat(3, 1fr); }
-      .contato-grid{ grid-template-columns: 1.1fr 1.4fr; }
-      .sobre-grid{ grid-template-columns: repeat(3, 1fr); }
-    }
-
-    /* Acessibilidade focos */
-    :focus-visible{
-      outline:2px dashed var(--cor-dourada);
-      outline-offset:2px;
-    }
-  </style>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
 
+<body>
   <!-- NAVBAR -->
   <header>
     <div class="container">
@@ -346,15 +56,22 @@
       <a class="arrow next" aria-label="Next slide" href="#!" data-control="next">❯</a>
 
       <ul class="slides" id="slides">
-        <li class="slide active" style="background-image:url('https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=1920&auto=format&fit=crop');"></li>
-        <li class="slide" style="background-image:url('https://images.unsplash.com/photo-1526779259212-939e64788e3c?q=80&w=1920&auto=format&fit=crop');"></li>
-        <li class="slide" style="background-image:url('https://images.unsplash.com/photo-1491555103944-7c647fd857e6?q=80&w=1920&auto=format&fit=crop');"></li>
+        <li class="slide active"
+          style="background-image:url('https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=1920&auto=format&fit=crop');">
+        </li>
+        <li class="slide"
+          style="background-image:url('https://images.unsplash.com/photo-1526779259212-939e64788e3c?q=80&w=1920&auto=format&fit=crop');">
+        </li>
+        <li class="slide"
+          style="background-image:url('https://images.unsplash.com/photo-1491555103944-7c647fd857e6?q=80&w=1920&auto=format&fit=crop');">
+        </li>
       </ul>
 
       <div class="hero-content container">
         <div>
           <h1>Premium travel for those who demand comfort.</h1>
-          <p>Exclusive experiences, curated 5★ hotels, private transfers and bespoke itineraries. Experience the luxury of traveling without worries with RtTours.</p>
+          <p id="hero-texto">Exclusive experiences, curated 5★ hotels, private transfers and bespoke itineraries.
+            Experience the luxury of traveling without worries with RtTours.</p>
           <a href="#destinos" class="cta-hero">✨ Explore destinations</a>
         </div>
       </div>
@@ -375,103 +92,247 @@
         <div class="sobre-grid">
           <article class="sobre-card">
             <h3 style="margin-top:0;font-family:'Montserrat',sans-serif;">Premium Curation</h3>
-            <p>We select iconic hotels, VIP lounges and award-winning dining experiences. Your time is precious — we turn it into unforgettable memories.</p>
+            <p>We select iconic hotels, VIP lounges and award-winning dining experiences. Your time is precious — we
+              turn it into unforgettable memories.</p>
           </article>
 
           <article class="sobre-card">
             <h3 style="margin-top:0;font-family:'Montserrat',sans-serif;">24/7 Support</h3>
-            <p>Dedicated concierge before, during and after your trip. Last-minute adjustments? Handled with discretion and speed.</p>
+            <p>Dedicated concierge before, during and after your trip. Last-minute adjustments? Handled with discretion
+              and speed.</p>
           </article>
 
           <article class="sobre-card">
             <h3 style="margin-top:0;font-family:'Montserrat',sans-serif;">Tailor-made Itineraries</h3>
-            <p>From executive transfers to private tours: everything aligned with your style, from wellness to business trips.</p>
+            <p>From executive transfers to private tours: everything aligned with your style, from wellness to business
+              trips.</p>
           </article>
         </div>
       </div>
     </section>
-
-    <!-- DESTINATIONS -->
-    <section id="destinos" class="destinos">
+    <section id="destinos" class="fundo">
       <div class="container">
         <h2 class="section-title">Destinations</h2>
         <p class="section-sub">Exclusive, elegant and unforgettable.</p>
-
-        <div class="grid-destinos">
-          <!-- Card 1 -->
-          <article class="card-destino">
-            <div class="thumb">
-              <img src="https://images.unsplash.com/photo-1524213452761-9f8950c79f36?q=80&w=1200&auto=format&fit=crop" alt="Seaside resort in the Maldives" style="width:100%;height:100%;object-fit:cover;">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+      </div>
+      <div class="viewport-destinos">
+        <div class="swiper mySwiper">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <div class="card-destino">
+                <div class="thumb">
+                  <img src="https://rjptours.pt/wp-content/uploads/2025/08/imagem_2025-08-05_234122546.png"
+                    alt="Lisbon Tour">
+                </div>
+                <div class="card-body">
+                  <h3>Coimbra & Aveiro Tour</h3>
+                  <p class="card-meta">A journey through Portugal’s academic soul and its charming “Venice of the West.”
+                  </p>
+                </div>
+              </div>
             </div>
-            <div class="card-body">
-              <span class="chip">Maldives</span>
-              <h3>Overwater bungalow</h3>
-              <p class="card-meta">7 nights • Breakfast • Private transfer</p>
+            <div class="swiper-slide">
+              <div class="card-destino">
+                <div class="thumb">
+                  <img src="https://rjptours.pt/wp-content/uploads/2025/08/imagem_2025-08-05_233456231.png"
+                    alt="Eiffel Tower view at dusk">
+                </div>
+                <div class="card-body">
+                  <h3>Algarve: Aquashow or Zoomarine</h3>
+                  <p class="card-meta">Unforgettable family adventure, with thrills, splashes, and marine wonders in the
+                    heart of the Algarve.</p>
+                </div>
+              </div>
             </div>
-          </article>
-
-          <!-- Card 2 -->
-          <article class="card-destino">
-            <div class="thumb">
-              <img src="https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?q=80&w=1200&auto=format&fit=crop" alt="Eiffel Tower view at dusk" style="width:100%;height:100%;object-fit:cover;">
+            <div class="swiper-slide">
+              <div class="card-destino">
+                <div class="thumb">
+                  <img src="https://rjptours.pt/wp-content/uploads/2025/08/algarvebenagil.jpg"
+                    alt="Dubai skyline with modern luxury">
+                </div>
+                <div class="card-body">
+                  <h3>Algarve e Benagil Tour</h3>
+                  <p class="card-meta">Crystal-clear waters, golden cliffs, and hidden caves – discover the magic of
+                    southern Portugal on an unforgettable journey.</p>
+                </div>
+              </div>
             </div>
-            <div class="card-body">
-              <span class="chip">Paris</span>
-              <h3>Romance & Haute Cuisine</h3>
-              <p class="card-meta">5 nights • Michelin dinner • Private city tour</p>
+            <div class="swiper-slide">
+              <div class="card-destino">
+                <div class="thumb">
+                  <img src="https://rjptours.pt/wp-content/uploads/2024/07/praca-do-comercio-em-lisboa.png)"
+                    alt="Vineyards in Tuscany at sunset">
+                </div>
+                <div class="card-body">
+                  <h3>Lisbon Tour</h3>
+                  <p class="card-meta">Discover the best of Lisbon in just four hours. From the charming historic center
+                    to panoramic views at Cristo Rei and the iconic landmarks of Belém.</p>
+                </div>
+              </div>
             </div>
-          </article>
-
-          <!-- Card 3 -->
-          <article class="card-destino">
-            <div class="thumb">
-              <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop" alt="Dubai skyline with modern luxury" style="width:100%;height:100%;object-fit:cover;">
+            <div class="swiper-slide">
+              <div class="card-destino">
+                <div class="thumb">
+                  <img
+                    src="https://rjptours.pt/wp-content/uploads/2024/07/parques_de_sintra_parque_e_palacio_da_pena_hero_01.webp"
+                    alt="Luxury safari in the African savannah">
+                </div>
+                <div class="card-body">
+                  <h3>Sintra-Cascais – Tours</h3>
+                  <p class="card-meta">Embark on a magical full-day escape through Portugal’s most romantic landscapes.
+                    Discover fairytale palaces, mystical gardens and dramatic coastal vistas with our premium private
+                    tour.</p>
+                </div>
+              </div>
             </div>
-            <div class="card-body">
-              <span class="chip">Dubai</span>
-              <h3>Beneath the golden glow</h3>
-              <p class="card-meta">6 nights • Desert 4x4 • VIP lounge</p>
+            <div class="swiper-slide">
+              <div class="card-destino">
+                <div class="thumb">
+                  <img src="https://rjptours.pt/wp-content/uploads/2024/07/Setubal_Baia_Noite_01-scaled-1.png"
+                    alt="Greek islands with crystal clear sea">
+                </div>
+                <div class="card-body">
+                  <h3>Setúbal – Palmela – Tours</h3>
+                  <p class="card-meta">Cross the iconic 25 de Abril Bridge and uncover the south’s hidden treasures.
+                    This full-day private tour unveils a region where dramatic coastal landscapes e historic castles.
+                  </p>
+                </div>
+              </div>
             </div>
-          </article>
-
-          <!-- Card 4 -->
-          <article class="card-destino">
-            <div class="thumb">
-              <img src="https://images.unsplash.com/photo-1489171078254-c3365d6e359f?q=80&w=1200&auto=format&fit=crop" alt="Vineyards in Tuscany at sunset" style="width:100%;height:100%;object-fit:cover;">
-            </div>
-            <div class="card-body">
-              <span class="chip">Tuscany</span>
-              <h3>Wine & Slow Travel</h3>
-              <p class="card-meta">4 nights • Tastings • Private driver</p>
-            </div>
-          </article>
-
-          <!-- Card 5 -->
-          <article class="card-destino">
-            <div class="thumb">
-              <img src="https://images.unsplash.com/photo-1494475673543-6a6a27143b22?q=80&w=1200&auto=format&fit=crop" alt="Luxury safari in the African savannah" style="width:100%;height:100%;object-fit:cover;">
-            </div>
-            <div class="card-body">
-              <span class="chip">Africa</span>
-              <h3>Luxury Safari</h3>
-              <p class="card-meta">5 nights • 5★ lodge • Private game drives</p>
-            </div>
-          </article>
-
-          <!-- Card 6 -->
-          <article class="card-destino">
-            <div class="thumb">
-              <img src="https://images.unsplash.com/photo-1471874708433-acd480424f76?q=80&w=1200&auto=format&fit=crop" alt="Greek islands with crystal clear sea" style="width:100%;height:100%;object-fit:cover;">
-            </div>
-            <div class="card-body">
-              <span class="chip">Greece</span>
-              <h3>Cyclades by yacht</h3>
-              <p class="card-meta">7 nights • Private yacht • Chef on board</p>
-            </div>
-          </article>
+          </div>
+          <!-- Swiper navigation -->
+          <div class="swiper-button">
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination"></div>
+          </div>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+        <script>
+          var swiper = new Swiper('.mySwiper', {
+            slidesPerView: 3,
+            spaceBetween: 0,
+            centeredSlides: true,
+            loop: true,
+            navigation: {
+              nextEl: '.swiper-button-next',
+              prevEl: '.swiper-button-prev',
+            },
+            pagination: {
+              el: '.swiper-pagination',
+              clickable: true,
+            },
+            slideToClickedSlide: true,
+            on: {
+              init: function () {
+                // Garante que o slide ativo tenha o estilo correto ao inicializar
+                this.slides.forEach((slide, index) => {
+                  if (slide.classList.contains('swiper-slide-active')) {
+                    slide.querySelector('.card-destino').style.opacity = '1';
+                    slide.querySelector('.card-destino').style.transform = 'scale(1)';
+                  }
+                });
+              },
+              slideChangeTransitionStart: function () {
+                // Aplica os estilos durante a transição
+                this.slides.forEach((slide) => {
+                  const card = slide.querySelector('.card-destino');
+                  if (slide.classList.contains('swiper-slide-active')) {
+                    card.style.opacity = '1';
+                    card.style.transform = 'scale(1)';
+                  } else {
+                    card.style.opacity = '0.6';
+                    card.style.transform = 'scale(0.85)';
+                  }
+                });
+              }
+            },
+            breakpoints: {
+              0: {
+                slidesPerView: 1,
+                centeredSlides: true,
+                spaceBetween: 20,
+              },
+              900: {
+                slidesPerView: 3,
+                centeredSlides: true,
+                spaceBetween: 32,
+              }
+            }
+          });
+        </script>
+
+
+
+      </div>
+
+    </section>
+
+    <!-- PRICING -->
+    <section class="precos">
+      <div class="container">
+        <h2 class="section-title">Transfer Services</h2>
+        <p class="section-sub">Private transfers & long distance routes</p>
+        <!-- NOVO CARD DE TRANSFERÊNCIAS -->
+        <article class="preco-card transfer-card">
+          <div class="transfer-list">
+            <div class="transfer-item">
+              <span class="transfer-route">Lisboa → Aeroporto</span>
+              <span class="transfer-price">40 €</span>
+            </div>
+            <div class="transfer-item">
+              <span class="transfer-route">Aeroporto → Lisboa (com placa)</span>
+              <span class="transfer-price">50 €</span>
+            </div>
+            <div class="transfer-item">
+              <span class="transfer-route">Cascais → Aeroporto</span>
+              <span class="transfer-price">70 €</span>
+            </div>
+            <div class="transfer-item">
+              <span class="transfer-route">Aeroporto → Cascais</span>
+              <span class="transfer-price">70 €</span>
+            </div>
+            <div class="transfer-item">
+              <span class="transfer-route">Lisboa → Algarve</span>
+              <span class="transfer-price">450 €</span>
+            </div>
+            <div class="transfer-item">
+              <span class="transfer-route">Lisboa → Albufeira</span>
+              <span class="transfer-price">450 €</span>
+            </div>
+            <div class="transfer-item">
+              <span class="transfer-route">Lisboa → Lagos</span>
+              <span class="transfer-price">500 €</span>
+            </div>
+            <div class="transfer-item">
+              <span class="transfer-route">Lisboa → Porto</span>
+              <span class="transfer-price">500 €</span>
+            </div>
+            <div class="transfer-item">
+              <span class="transfer-route">Lisboa → Sevilha</span>
+              <span class="transfer-price">700 €</span>
+            </div>
+            <div class="transfer-item">
+              <span class="transfer-route">Lisboa → Santiago de Compostela</span>
+              <span class="transfer-price">1000 €</span>
+            </div>
+            <div class="transfer-item">
+              <span class="transfer-route">Lisboa → Madrid</span>
+              <span class="transfer-price">1250 €</span>
+            </div>
+          </div>
+        </article>
+      </div>
       </div>
     </section>
+
+
+
+
+
+
+
 
     <!-- CTA PARALLAX -->
     <section id="experiencia" class="cta-parallax" aria-label="Invitation to the RtTours experience">
@@ -499,51 +360,67 @@
             <div class="contato-item">💬 WhatsApp: <strong>(11) 90000-0000</strong></div>
             <div class="contato-item">✉️ Email: <strong>contato@rttur.com</strong></div>
 
-            <a class="btn-whatsapp" href="https://wa.me/5599999999999" target="_blank" rel="noopener">WhatsApp</a>
+            <a class="btn-whatsapp" href="https://wa.me/351911510092" target="_blank" rel="noopener">WhatsApp</a>
           </div>
 
           <!-- Right Column -->
           <div class="contato-right">
-            <form id="formContato" novalidate>
+            <form id="contactForm">
               <div>
                 <label for="nome">Name</label>
-                <input type="text" id="nome" name="nome" placeholder="Your full name" required>
+                <input type="text" id="nome" name="name" placeholder="Your full name" required>
               </div>
+
               <div>
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="you@email.com" required>
               </div>
+
               <div>
                 <label for="telefone">Phone</label>
                 <input type="tel" id="telefone" name="telefone" placeholder="(DDD) 90000-0000" required>
               </div>
+
               <div>
                 <label for="mensagem">Message</label>
-                <textarea id="mensagem" name="mensagem" placeholder="Tell us about your travel plans" required></textarea>
+                <textarea id="mensagem" name="mensagem" placeholder="Tell us about your travel plans"
+                  required></textarea>
               </div>
               <button type="submit" class="btn-enviar">Send</button>
-              <div class="msg-ok" role="status" aria-live="polite">✅ Message sent! We will contact you shortly.</div>
-              <div class="msg-erro" role="alert">⚠️ Please fill out all fields correctly.</div>
             </form>
           </div>
         </div>
       </div>
     </section>
 
+
+    <a class="botao-wpp" href="https://wa.me/351911510092" target="_blank" rel="noopener"
+      aria-label="Contact us on WhatsApp">
+      <img src="./btn-wpp.png" alt="WhatsApp Icon" />
+    </a>
+
+    <div id="form-popup" class="form-popup" aria-live="polite" aria-atomic="true">
+      <div class="popup-content">
+        <span id="popup-message"></span>
+        <button id="close-popup" class="close-popup" aria-label="Fechar mensagem">×</button>
+      </div>
+    </div>
+
   </main>
 
   <!-- FOOTER -->
   <footer>
     <div class="container footer-inner">
-      <div>© <span id="year"></span> <strong>RtTours</strong><span class="sep">•</span> Premium travel and exclusive destinations</div>
+      <div>© <span id="year"></span> <strong>RtTours</strong><span class="sep">•</span> Premium travel and exclusive
+        destinations</div>
     </div>
   </footer>
 
   <!-- JavaScript ES6+ -->
   <script>
     // Utilidades
-    const $ = (sel, el=document) => el.querySelector(sel);
-    const $$ = (sel, el=document) => [...el.querySelectorAll(sel)];
+    const $ = (sel, el = document) => el.querySelector(sel);
+    const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
 
     // Year in footer
     $('#year').textContent = new Date().getFullYear();
@@ -569,7 +446,6 @@
     const dots = $$('.dot');
     const prevBtn = $('[data-control="prev"]');
     const nextBtn = $('[data-control="next"]');
-
     let current = 0;
     let timer = null;
     const DURATION = 5500; // ms
@@ -603,34 +479,65 @@
       el.addEventListener('mouseleave', startAuto);
     });
 
-    // Start
+    // Formulario de contato
     startAuto();
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("contactForm");
+      const statusEl = document.getElementById("form-status");
+      const popup = document.getElementById("form-popup");
+      const popupMessage = document.getElementById("popup-message");
+      const closePopup = document.getElementById("close-popup");
 
-    // Simple form validation
-    const form = $('#formContato');
-    const msgOk = $('.msg-ok', form);
-    const msgErro = $('.msg-erro', form);
 
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      msgOk.style.display = 'none';
-      msgErro.style.display = 'none';
+      function showPopup(message, isSuccess) {
+        popupMessage.textContent = message;
 
-      const data = new FormData(form);
-      const nome = (data.get('nome') || '').trim();
-      const email = (data.get('email') || '').trim();
-      const telefone = (data.get('telefone') || '').trim();
-      const mensagem = (data.get('mensagem') || '').trim();
-
-      const camposOk = nome && email && telefone && mensagem && email.includes('@');
-
-      if (!camposOk) {
-        msgErro.style.display = 'block';
-        return;
+        // Define a cor da borda baseada no sucesso
+        if (isSuccess) {
+          popup.style.borderColor = "#ffffff";
+        } else {
+          popup.style.borderColor = "#f44336";
+        }
+        popup.classList.add("show");
+        setTimeout(() => {
+          hidePopup();
+        }, 5000);
+      }
+      // Função para esconder popup
+      function hidePopup() {
+        popup.classList.remove("show");
       }
 
-      // Here you could perform a real fetch/POST.
-      form.reset();
+      // Evento de fechar popup
+      closePopup.addEventListener("click", hidePopup);
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault(); // Impede o redirecionamento
+        showPopup("Enviando sua mensagem...", false);
+
+        try {
+          const formData = new FormData(form);
+          const response = await fetch("https://formspree.io/f/xrbrgqnj", {
+            method: "POST",
+            body: formData,
+            headers: { "Accept": "application/json" }
+          });
+
+          if (response.ok) {
+            showPopup(" Mensagem enviada com sucesso!", true);
+            form.reset();
+          } else {
+            showPopup(" Algo deu errado. Tente novamente mais tarde.", false);
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          showPopup("⚠ Erro de conexão. Por favor, tente novamente.", false);
+        }
+      });
+
+      //form.reset();
+      eventdefault()
+
       msgOk.style.display = 'block';
     });
   </script>
